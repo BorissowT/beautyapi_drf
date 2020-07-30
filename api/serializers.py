@@ -1,9 +1,9 @@
-from rest_framework.serializers import Serializer, ModelSerializer, HyperlinkedModelSerializer
+from rest_framework.serializers import HyperlinkedModelSerializer, ModelSerializer
 
 from api.models import ProductSets, Recipient, Order
 
 
-class ProductSetsSerializer(HyperlinkedModelSerializer):
+class ProductSetsSerializer(ModelSerializer):
     class Meta:
         model = ProductSets
         fields = '__all__'

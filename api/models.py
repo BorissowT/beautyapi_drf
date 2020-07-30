@@ -7,6 +7,8 @@ import datetime
 class ProductSets(models.Model):
     title = models.CharField(max_length=50)
     description = models.TextField(max_length=1000)
+    price = models.IntegerField()
+    weight = models.IntegerField()
 
 
 class Recipient(models.Model):
