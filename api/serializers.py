@@ -12,7 +12,7 @@ class ProductSetsSerializer(ModelSerializer):
         return ProductSets.objects.create(**data)
 
 
-class RecipientSerializer(HyperlinkedModelSerializer):
+class RecipientSerializer(ModelSerializer):
     class Meta:
         model = Recipient
         fields = '__all__'

@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from api.models import ProductSets, Recipient, Order
-from rest_framework.generics import ListAPIView
+from rest_framework.generics import ListAPIView, RetrieveAPIView
 from api.serializers import ProductSetsSerializer, RecipientSerializer, OrderSerializer
 from rest_framework.response import Response
 from rest_framework import status
@@ -28,8 +28,22 @@ class BeautyBoxesList(ListAPIView):
             else:
                 return Response(status=status.HTTP_400_BAD_REQUEST)
         if products_queryset:
-            serializer_class = ProductSetsSerializer(products_queryset, many=True)
+            serializer_class = ProductSetsSerializer(products_queryset, many=True, context={'request': request})
             return Response(serializer_class.data)
         else:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
+
+class BeautyBoxDetail(RetrieveAPIView):
+    queryset = ProductSets.objects.all()
+    serializer_class = ProductSetsSerializer
+
+
+class RecipientsList(ListAPIView):
+    queryset = Recipient.objects.all()
+    serializer_class = RecipientSerializer
+
+
+class RecipientDetail(RetrieveAPIView):
+    queryset = Recipient.objects.all()
+    serializer_class = RecipientSerializer
