@@ -1,5 +1,6 @@
 
-from api.views import BeautyBoxesList, BeautyBoxDetail, RecipientsList, RecipientDetail
+from api.views import BeautyBoxesList, BeautyBoxDetail,\
+    RecipientsList, RecipientDetail, OrdersList
 from django.contrib import admin
 from django.urls import path
 
@@ -9,4 +10,7 @@ urlpatterns = [
 
     path('recipients/', RecipientsList.as_view(), name='recipients_list'),
     path('recipients/<int:pk>/', RecipientDetail.as_view(), name='recipient_detail'),
+
+    path('orders/', OrdersList.as_view(), name="orders_list"),
+    # path('orders/<int:pk>/', OrderDetail.as_view(), name="orders_list")
 ]

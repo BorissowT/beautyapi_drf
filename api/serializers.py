@@ -21,7 +21,12 @@ class RecipientSerializer(ModelSerializer):
         return Recipient.objects.create(**data)
 
 
-class OrderSerializer(HyperlinkedModelSerializer):
+class OrderSerializer(ModelSerializer):
     class Meta:
         model = Order
         fields = '__all__'
+
+    def create(self, data):
+        return Order.objects.create(
+
+        )

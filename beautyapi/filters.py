@@ -1,9 +1,9 @@
 from rest_framework import filters
 
-from api.models import ProductSets
+from api.models import ProductSets, Order
 
 
-class FilterBackend(filters.BaseFilterBackend):
+class BeautyBoxesFilterBackend(filters.BaseFilterBackend):
 
     def filter_queryset(self, request, queryset, view):
         min_price = request.query_params.get('min_price')
@@ -18,4 +18,12 @@ class FilterBackend(filters.BaseFilterBackend):
         return result
 
 
+class OrdersFilterBackend(filters.BaseFilterBackend):
+
+    def filter_queryset(self, request, queryset, view):
+        if request.user.is_superuser:
+            result = Order.objects.all()
+        else:
+            result = Order.objects.filter(user=request.user)
+        return result
 

@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 import datetime
 # Create your models here.
@@ -20,7 +21,7 @@ class Recipient(models.Model):
 
 class Order(models.Model):
     order_created_datetime = models.DateField(default=datetime.date.today)
-    delivery_datetime = models.DateField(default=datetime.date.today)
+    delivery_datetime = models.DateField(default=datetime.date.today() + datetime.timedelta(days=3))
     delivery_address = models.CharField(max_length=150)
     recipient = models.ForeignKey(Recipient, on_delete=models.CASCADE, related_name='myorders')
     product_set = models.ForeignKey(ProductSets, on_delete=models.CASCADE, related_name='orders')
@@ -31,3 +32,4 @@ class Order(models.Model):
         ("CANCELLED", "cancelled")
     ]
     status = models.CharField(max_length=9, default="CREATED", choices=choices)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='order')
