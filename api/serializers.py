@@ -34,3 +34,5 @@ class UserSerializer(ModelSerializer):
 
     def create(self, data):
         return User.objects.create_user(**data)
+
+

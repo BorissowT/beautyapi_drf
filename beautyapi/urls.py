@@ -1,6 +1,6 @@
 
 from api.views import BeautyBoxesList, BeautyBoxDetail,\
-    RecipientsList, RecipientDetail, OrdersList, OrderDetail, Register
+    RecipientsList, RecipientDetail, OrdersList, OrderDetail, Register, OrderClose
 from django.contrib import admin
 from django.urls import path, include
 
@@ -14,7 +14,7 @@ urlpatterns = [
     path('recipients/<int:pk>/', RecipientDetail.as_view(), name='recipient_detail'),
 
     path('orders', OrdersList.as_view(), name="orders_list"),
-    path('orders/<int:pk>/', OrderDetail.as_view(), name="orders_detail")
-
+    path('orders/<int:pk>/', OrderDetail.as_view(), name="orders_detail"),
+    path('orders/close/<int:pk>', OrderClose.as_view(), name="orders_close")
 
 ]

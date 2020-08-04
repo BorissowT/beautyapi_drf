@@ -1,6 +1,8 @@
 from django.contrib.auth.models import User
 from rest_framework import status
-from rest_framework.generics import ListAPIView, RetrieveAPIView, ListCreateAPIView, CreateAPIView
+from rest_framework.generics import ListAPIView, RetrieveAPIView, ListCreateAPIView,\
+    CreateAPIView, UpdateAPIView
+from rest_framework.views import APIView
 from rest_framework.permissions import *
 from rest_framework.response import Response
 from django.http import HttpResponse
@@ -86,6 +88,20 @@ class OrderDetail(RetrieveAPIView):
     filter_backends = [OrdersFilterBackend]
 
 
+class OrderClose(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def patch(self, request, pk, format=None):
+        order = Order.objects.filter(id=pk).first()
+        if order.user != request.user:
+            return Response(status.HTTP_403_FORBIDDEN)
+        order.status = "CANCELLED"
+        order.save()
+        return Response(status.HTTP_202_ACCEPTED)
+
+
 class Register(CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+
+
