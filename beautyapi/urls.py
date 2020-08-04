@@ -1,16 +1,20 @@
 
 from api.views import BeautyBoxesList, BeautyBoxDetail,\
-    RecipientsList, RecipientDetail, OrdersList
+    RecipientsList, RecipientDetail, OrdersList, OrderDetail, Register
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 
 urlpatterns = [
+    path('register', Register.as_view(), name='register'),
+
     path('product-sets/', BeautyBoxesList.as_view(), name='beutyboxes_list'),
     path('product-sets/<int:pk>/', BeautyBoxDetail.as_view(), name='beautybox_detail'),
 
-    path('recipients/', RecipientsList.as_view(), name='recipients_list'),
+    path('recipients', RecipientsList.as_view(), name='recipients_list'),
     path('recipients/<int:pk>/', RecipientDetail.as_view(), name='recipient_detail'),
 
-    path('orders/', OrdersList.as_view(), name="orders_list"),
-    # path('orders/<int:pk>/', OrderDetail.as_view(), name="orders_list")
+    path('orders', OrdersList.as_view(), name="orders_list"),
+    path('orders/<int:pk>/', OrderDetail.as_view(), name="orders_detail")
+
+
 ]

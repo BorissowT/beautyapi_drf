@@ -1,12 +1,15 @@
-from django.shortcuts import render
-from api.models import ProductSets, Recipient, Order
-from rest_framework.generics import ListAPIView, RetrieveAPIView, ListCreateAPIView
-from api.serializers import ProductSetsSerializer, RecipientSerializer, OrderSerializer
+from django.contrib.auth.models import User
+from rest_framework import status
+from rest_framework.generics import ListAPIView, RetrieveAPIView, ListCreateAPIView, CreateAPIView
 from rest_framework.permissions import *
 from rest_framework.response import Response
-from rest_framework import status
-from django_filters.rest_framework import DjangoFilterBackend
-from beautyapi.filters import BeautyBoxesFilterBackend, OrdersFilterBackend
+from django.http import HttpResponse
+import json
+
+from api.models import ProductSets, Recipient, Order
+from api.serializers import ProductSetsSerializer, RecipientSerializer, OrderSerializer,\
+    UserSerializer
+from beautyapi.filters import BeautyBoxesFilterBackend, OrdersFilterBackend, RecipientsFilterBackend
 
 
 class BeautyBoxesList(ListAPIView):
@@ -20,10 +23,27 @@ class BeautyBoxDetail(RetrieveAPIView):
     serializer_class = ProductSetsSerializer
 
 
-class RecipientsList(ListAPIView):
-    permission_classes = [IsAdminUser]
+class RecipientsList(ListCreateAPIView):
+    permission_classes = [IsAuthenticated]
     queryset = Recipient.objects.all()
     serializer_class = RecipientSerializer
+    filter_backends = [RecipientsFilterBackend]
+
+    def post(self, request, *args):
+        if Recipient.objects.filter(name=request.user.first_name,
+                                    surname=request.user.last_name).first():
+            content = {"warning": "a recipient with this name and surname already exists"}
+            return HttpResponse(json.dumps(content), status=status.HTTP_400_BAD_REQUEST)
+        else:
+            user = request.user
+            user.first_name = request.data['name']
+            user.last_name = request.data['surname']
+            user.save()
+            serializer_class = RecipientSerializer(data=request.data)
+            if not serializer_class.is_valid():
+                return Response(status=status.HTTP_400_BAD_REQUEST)
+            serializer_class.save()
+            return Response(serializer_class.data, status=status.HTTP_201_CREATED)
 
 
 class RecipientDetail(RetrieveAPIView):
@@ -38,3 +58,34 @@ class OrdersList(ListCreateAPIView):
     filter_backends = [OrdersFilterBackend]
     serializer_class = OrderSerializer
 
+    def post(self, request, *args):
+        if not request.user.first_name or not request.user.last_name:
+            content = {"warning": "to make an order user has to register a recipient first"}
+            return HttpResponse(json.dumps(content), status=status.HTTP_400_BAD_REQUEST)
+        recipient = Recipient.objects.filter(name=request.user.first_name,
+                                             surname=request.user.last_name).first()
+        if not recipient:
+            content = {"warning": "the recipient doesn't found. try to set up a new one"}
+            return HttpResponse(json.dumps(content), status=status.HTTP_400_BAD_REQUEST)
+        serializer_class = OrderSerializer(data={
+            'delivery_address': request.data['delivery_address'],
+            'product_set': request.data['product_set'],
+            'user': request.user.pk,
+            'recipient': recipient.pk
+        })
+        if not serializer_class.is_valid():
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        serializer_class.save()
+        return Response(serializer_class.data, status=status.HTTP_201_CREATED)
+
+
+class OrderDetail(RetrieveAPIView):
+    permission_classes = [IsAuthenticated]
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer
+    filter_backends = [OrdersFilterBackend]
+
+
+class Register(CreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
