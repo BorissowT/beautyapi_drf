@@ -54,6 +54,23 @@ class RecipientDetail(RetrieveAPIView):
     serializer_class = RecipientSerializer
 
 
+class OrderAddressEdit(APIView):
+    permission_classes = [IsAuthenticated]
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer
+
+    def patch(self, request, pk):
+        order = Order.objects.filter(id=pk).first()
+        if not order:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        if order.user != request.user:
+            return Response(status=status.HTTP_403_FORBIDDEN)
+        if request.data.get("delivery_address"):
+            order.delivery_address = request.data.get("delivery_address")
+            order.save()
+        return Response(status=status.HTTP_202_ACCEPTED)
+
+
 class OrdersList(ListCreateAPIView):
     permission_classes = [IsAuthenticated]
     queryset = Order.objects.all()
