@@ -27,8 +27,15 @@ class OrdersFilterBackend(filters.BaseFilterBackend):
     def filter_queryset(self, request, queryset, view):
         if request.user.is_superuser:
             result = Order.objects.all()
+            if request.query_params.get('order_created_datetime'):
+                result = Order.objects.filter(order_created_datetime=request.query_params.
+                                              get('order_created_datetime'))
         else:
             result = Order.objects.filter(user=request.user)
+            if request.query_params.get('order_created_datetime'):
+                result = Order.objects.filter(order_created_datetime=request.query_params.
+                                              get('order_created_datetime'),
+                                              user=request.user)
         return result
 
 

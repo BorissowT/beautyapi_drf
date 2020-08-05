@@ -7,6 +7,8 @@ from rest_framework.permissions import *
 from rest_framework.response import Response
 from django.http import HttpResponse
 import json
+from rest_framework import viewsets
+from rest_framework.decorators import action
 
 from api.models import ProductSets, Recipient, Order
 from api.serializers import ProductSetsSerializer, RecipientSerializer, OrderSerializer,\
@@ -52,6 +54,16 @@ class RecipientDetail(RetrieveAPIView):
     permission_classes = [IsAdminUser]
     queryset = Recipient.objects.all()
     serializer_class = RecipientSerializer
+
+
+class RecipientNameEdit(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    queryset = Recipient.objects.all()
+
+    @action(detail=True, methods=['patch'])
+    def edit_credentials(self, request, pk=None):
+        print(pk)
+        return Response(status=status.HTTP_202_ACCEPTED)
 
 
 class OrderAddressEdit(APIView):
