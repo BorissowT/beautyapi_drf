@@ -57,11 +57,10 @@ class RecipientDetail(RetrieveAPIView):
 
 
 class RecipientNameEdit(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]
     queryset = Recipient.objects.all()
 
     @action(detail=True, methods=['patch'])
-    def edit_credentials(self, request, pk=None):
+    def editname(self, request, pk=None):
         print(pk)
         return Response(status=status.HTTP_202_ACCEPTED)
 

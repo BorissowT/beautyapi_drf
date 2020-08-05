@@ -13,6 +13,7 @@ urlpatterns = [
 
     path('recipients', RecipientsList.as_view(), name='recipients_list'),
     path('recipients/<int:pk>/', RecipientDetail.as_view(), name='recipient_detail'),
+    path('recipients/<int:pk>/editname', RecipientNameEdit, name='recipient_edit'),
 
     path('orders', OrdersList.as_view(), name="orders_list"),
     path('orders/<int:pk>/', OrderDetail.as_view(), name="orders_detail"),
